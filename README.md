@@ -6,7 +6,7 @@ Minimal knowledge of Elasticsearch and DeepDetect is required.
 Usage:
 	The initial part of the script is used to set a series of lists with parameters which will be combined in all possible combinations, then run serially.
 	It connects to a local dede and elasticsearch instances in their default ports.
-	Not all possible parameters are present, currently the only parameteres that can be used in the grid search are:
+	Not all possible parameters are present and only works with txt connectors at the moment, currently the only parameteres that can be used in the grid search are:
 		solver_type_list
 		layers_list
 		iterations_list

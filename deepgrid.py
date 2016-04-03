@@ -4,21 +4,21 @@ from elasticsearch import Elasticsearch
 from time import sleep
 
 #Set initial lists of parameters to build different services
-solver_type_list = ['ADAM']
-layers_list = [[2000,750,200],[1000,500,100]]
-iterations_list = [15000]
-base_lr_list = [0.05]
-template_list = ["mlp"]
-activation_list = ["relu"]
-test_split_list = [0.2]
-min_count_list = [2]
-min_word_length_list = [2]
-batch_size_list = [100,200,300,400]
-test_interval_list = [200]
+solver_type_list = []
+layers_list = []
+iterations_list = []
+base_lr_list = []
+template_list = []
+activation_list = []
+test_split_list = []
+min_count_list = []
+min_word_length_list = []
+batch_size_list = []
+test_interval_list = []
 services_list = []
 
 #Set elasticsearch connection
-es = Elasticsearch()
+es = Elasticsearch(request_timeout=60)
 
 #Create log file
 log_file = open("dede_testing.log","w")

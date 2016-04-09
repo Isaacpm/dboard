@@ -175,7 +175,7 @@ for service in services_list:
             }
             #print("data_point")
             #print(doc)
-            es.index(index="job_data_tracking", doc_type='data_point', body=doc)
+            es.index(index="job_data_tracking_"+service, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             #print(job_data['body']['measure_hist'])
             #print(len(job_data['body']['measure_hist']['iteration_hist']))
@@ -227,7 +227,7 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-                es.index(index="job_data", doc_type='data_point', body=doc)
+                es.index(index="job_data_"+service, doc_type='data_point', body=doc)
             #Insert last data point from the job summary
             doc = {
                 'running_time': running_time,
@@ -254,7 +254,7 @@ for service in services_list:
             }
             #print("data_point")
             #print(doc)
-            es.index(index="job_data", doc_type='data_point', body=doc)
+            es.index(index="job_data_"+service, doc_type='data_point', body=doc)
             #data for job summary to be inserted in another index
             cmdiag = job_data['body']['measure']['cmdiag']
             cmfull = job_data['body']['measure']['cmfull']
@@ -278,7 +278,7 @@ for service in services_list:
                 }
             #print('summary')
             #print(doc)
-            es.index(index="job_summary", doc_type='summary', body=doc)
+            es.index(index="job_summary_"+service, doc_type='summary', body=doc)
             #store confusion matrix
             for department in cmfull:
                 department_name = department
@@ -303,7 +303,7 @@ for service in services_list:
                 }
                 #print("confusion")
                 #print(doc)
-                es.index(index="confusion_matrix", doc_type='matrix', body=doc)
+                es.index(index="confusion_matrix_"+service, doc_type='matrix', body=doc)
             break
         sleep(10)
         count_job_data += 1

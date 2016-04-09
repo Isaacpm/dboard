@@ -3,19 +3,33 @@ from dd_client import DD
 from elasticsearch import Elasticsearch
 from time import sleep
 
-#Set initial lists of parameters to build different services
-solver_type_list = []
-layers_list = []
-iterations_list = []
-base_lr_list = []
-template_list = []
-activation_list = []
-test_split_list = []
-min_count_list = []
-min_word_length_list = []
-batch_size_list = []
-test_interval_list = []
-services_list = []
+#Parse config file and get parameters and connection settings
+config_file = open('deepgrid.conf','r')
+
+config_dict = {}
+
+for line in config_file:
+    if not line[0] == "#":
+        parameter = line.split(':')[0].strip()
+        value = line.split(':')[1].strip()
+        config_dict[parameter] = value
+
+dede_server = config_dict.get('dede_server')
+es_server = config_dict.get('es_server')
+
+#Services Parameters
+solver_type_list = config_dict.get('solver_type_list')
+layers_list = config_dict.get('layers_list')
+iterations_list = config_dict.get('iterations_list')
+base_lr_list = config_dict.get('base_lr_list')
+template_list = config_dict.get('template_list')
+activation_list = config_dict.get('activation_list')
+test_split_list = config_dict.get('test_split_list')
+min_count_list = config_dict.get('min_count_list')
+min_word_length_list = config_dict.get('min_word_length_list')
+batch_size_list = config_dict.get('batch_size_list')
+test_interval_list = config_dict.get('test_interval_list')
+services_list = config_dict.get('services_list')
 
 #Set elasticsearch connection
 es = Elasticsearch(request_timeout=60)

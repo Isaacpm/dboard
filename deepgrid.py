@@ -11,16 +11,17 @@ config_dict = {}
 for line in config_file:
     if line and line[0].isalpha():
         parameter = line.split(':')[0].strip()
-        value = line.split(':')[1].strip().split(',')
+        value = line.split(':')[1].strip().split(';')
         print(parameter,value)
         config_dict[parameter] = value
 
 dede_server = config_dict.get('dede_server')[0]
 es_server = config_dict.get('es_server')[0]
 
+
 #Services Parameters
 solver_type_list = config_dict.get('solver_type_list')
-layers_list = config_dict.get('layers_list')
+layers_list = [layer.split(',') for layer in config_dict.get('layers_list')]
 iterations_list = config_dict.get('iterations_list')
 base_lr_list = config_dict.get('base_lr_list')
 template_list = config_dict.get('template_list')

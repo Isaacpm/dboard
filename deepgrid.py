@@ -30,7 +30,7 @@ min_count_list = config_dict.get('min_count_list')
 min_word_length_list = config_dict.get('min_word_length_list')
 batch_size_list = config_dict.get('batch_size_list')
 test_interval_list = config_dict.get('test_interval_list')
-nclasses = config_dict.get('nclasses')[0]
+nclasses = int(config_dict.get('nclasses')[0])
 root_repository = config_dict.get('root_repository')[0]
 
 #Initialize the services list
@@ -57,12 +57,12 @@ for solver in solver_type_list:
                                         for test_interval in test_interval_list:
                                             service_dict = {}
                                             if template == 'mlp':
-                                                service_dict["service_name"] = "level_1_"+solver+"_"+str("-".join(str(x) for x in layers))+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
-                                                service_dict["description"] = "level_1 "+solver+" "+str("-".join(str(x) for x in layers))+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
+                                                service_dict["service_name"] = solver+"_"+str("-".join(str(x) for x in layers))+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
+                                                service_dict["description"] = solver+" "+str("-".join(str(x) for x in layers))+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
                                                 service_dict["layers"] = layers
                                             else:
-                                                service_dict["service_name"] = "level_1 "+solver+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
-                                                service_dict["description"] = "level_1_"+solver+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
+                                                service_dict["service_name"] = solver+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
+                                                service_dict["description"] = solver+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
                                             service_dict["solver_type"] = solver
                                             service_dict["iterations"] = iterations
                                             service_dict["base_lr"] = base_lr
@@ -99,15 +99,15 @@ for service in services_list:
     log_file.write("Starting test for "+service_name+"\n")
     log_file.flush()
     if service['template'] == 'mlp':
-        layers = service['layers']
+        layers = [int(x) for x in service['layers']]
     description = service['description']
     template = service['template']
     activation = service['activation']
-    test_split = service["test_split"]
-    min_count = service["min_count"]
-    min_word_length = service["min_word_length"]
-    batch_size = service["batch_size"]
-    test_interval = service["test_interval"]
+    test_split = float(service["test_split"])
+    min_count = int(service["min_count"])
+    min_word_length = int(service["min_word_length"])
+    batch_size = int(service["batch_size"])
+    test_interval = int(service["test_interval"])
     mllib = 'caffe'
     model = {'templates':'/var/deepdetect/templates/caffe/','repository':root_repository+service_name}
     parameters_input_service = {'connector':'txt'}
@@ -116,15 +116,16 @@ for service in services_list:
     elif template == "lregression":
         parameters_mllib_service  = {'template':template,'nclasses':nclasses,'activation':activation}
     parameters_output_service  = {'measure':['mcll','f1']}
+    print(service_name,model,description,mllib,parameters_input_service,parameters_mllib_service,parameters_output_service)
     dd.put_service(service_name,model,description,mllib,parameters_input_service,parameters_mllib_service,parameters_output_service)
     #Start training the service
-    iterations = service['iterations']
+    iterations = int(service['iterations'])
     solver_type = service['solver_type']
-    base_lr = service['base_lr']
+    base_lr = float(service['base_lr'])
     parameters_input_training = {'shuffle':True,'test_split':test_split,'min_count':min_count,'min_word_length':min_word_length,'count':False}
     parameters_mllib_training = {'gpu':True,'solver':{'iterations':iterations,'test_interval':test_interval,'base_lr':base_lr,'solver_type':solver_type},'net':{'batch_size':batch_size}}
     parameters_output_training = {'measure':['mcll','f1','cmdiag','cmfull']}
-    train_data = ['/var/models/dataset/']
+    train_data = [root_repository+'dataset/']
     print(service_name,train_data,parameters_input_training,parameters_mllib_training,parameters_output_training)
     training_service = dd.post_train(service_name.lower(),train_data,parameters_input_training,parameters_mllib_training,parameters_output_training,async=True)
     job_number = training_service['head']['job']

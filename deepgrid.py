@@ -170,7 +170,7 @@ for service in services_list:
                 'batch_size': batch_size,
                 'test_interval': test_interval
             }
-            es.index(index="dede_job_data_tracking_"+service_name.lower(), doc_type='data_point', body=doc)
+            es.index(index="dede_job_tracking_"+service_name.lower(), doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
             log_file.write("Iteration number "+str(job_data['body']['measure']['iteration'])+"\n")

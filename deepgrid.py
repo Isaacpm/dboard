@@ -32,7 +32,7 @@ test_interval_list = config_dict.get('test_interval_list')
 services_list = config_dict.get('services_list')
 
 #Set elasticsearch connection
-es = Elasticsearch(request_timeout=60)
+es = Elasticsearch(es_server,request_timeout=60)
 
 #Create log file
 log_file = open("dede_testing.log","w")
@@ -78,7 +78,7 @@ for service in services_list:
         os.makedirs(directory)
 
 #Connect to DD
-dd = DD('localhost')
+dd = DD(dede_server)
 dd.set_return_format(dd.RETURN_PYTHON)
 
 #Start the creation and training of services, pulling data every 10sec

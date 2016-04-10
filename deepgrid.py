@@ -12,7 +12,6 @@ for line in config_file:
     if line and line[0].isalpha():
         parameter = line.split(':')[0].strip()
         value = line.split(':')[1].strip().split(';')
-        print(parameter,value)
         config_dict[parameter] = value
 
 dede_server = config_dict.get('dede_server')[0]
@@ -31,6 +30,8 @@ min_count_list = config_dict.get('min_count_list')
 min_word_length_list = config_dict.get('min_word_length_list')
 batch_size_list = config_dict.get('batch_size_list')
 test_interval_list = config_dict.get('test_interval_list')
+nclasses = config_dict.get('nclasses')[0]
+root_repository = config_dict.get('root_repository')[0]
 
 #Initialize the services list
 services_list = []
@@ -56,12 +57,12 @@ for solver in solver_type_list:
                                         for test_interval in test_interval_list:
                                             service_dict = {}
                                             if template == 'mlp':
-                                                service_dict["service_name"] = solver+"_"+str("-".join(str(x) for x in layers))+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
-                                                service_dict["description"] = solver+" "+str("-".join(str(x) for x in layers))+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
+                                                service_dict["service_name"] = "level_1_"+solver+"_"+str("-".join(str(x) for x in layers))+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
+                                                service_dict["description"] = "level_1 "+solver+" "+str("-".join(str(x) for x in layers))+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
                                                 service_dict["layers"] = layers
                                             else:
-                                                service_dict["service_name"] = solver+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
-                                                service_dict["description"] = solver+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
+                                                service_dict["service_name"] = "level_1 "+solver+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
+                                                service_dict["description"] = "level_1_"+solver+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
                                             service_dict["solver_type"] = solver
                                             service_dict["iterations"] = iterations
                                             service_dict["base_lr"] = base_lr
@@ -77,7 +78,7 @@ for solver in solver_type_list:
 
 #Create folders for all models
 for service in services_list:
-    directory = "/var/models/"+service['service_name']
+    directory = root_repository+service['service_name']
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -86,16 +87,15 @@ dd = DD(dede_server)
 dd.set_return_format(dd.RETURN_PYTHON)
 
 #Start the creation and training of services, pulling data every 10sec
-#print(len(services_list))
 service_count = 1
 for service in services_list:
-    #print("service number ",service_count," of ",len(services_list))
+    print("service number ",service_count," of ",len(services_list))
     log_file.write("service number "+str(service_count)+" of "+str(len(services_list))+"\n")
     log_file.flush()
     service_count += 1
     #create the service
     service_name = service['service_name']
-    #print("Starting test for "+service_name)
+    print("Starting test for "+service_name)
     log_file.write("Starting test for "+service_name+"\n")
     log_file.flush()
     if service['template'] == 'mlp':
@@ -109,12 +109,12 @@ for service in services_list:
     batch_size = service["batch_size"]
     test_interval = service["test_interval"]
     mllib = 'caffe'
-    model = {'templates':'/var/deepdetect/templates/caffe/','repository':'/var/models/'+service_name}
+    model = {'templates':'/var/deepdetect/templates/caffe/','repository':root_repository+service_name}
     parameters_input_service = {'connector':'txt'}
     if template == "mlp":
-        parameters_mllib_service  = {'template':template,'nclasses':60,'layers':layers,'activation':activation}
+        parameters_mllib_service  = {'template':template,'nclasses':nclasses,'layers':layers,'activation':activation}
     elif template == "lregression":
-        parameters_mllib_service  = {'template':template,'nclasses':60,'activation':activation}
+        parameters_mllib_service  = {'template':template,'nclasses':nclasses,'activation':activation}
     parameters_output_service  = {'measure':['mcll','f1']}
     dd.put_service(service_name,model,description,mllib,parameters_input_service,parameters_mllib_service,parameters_output_service)
     #Start training the service
@@ -135,11 +135,8 @@ for service in services_list:
     while status_code == 200:
         job_data = dd.get_train(service_name.lower(),job=job_number, measure_hist=True)
         status_code = job_data['status']['code']
-        #print(status_code)
-        #print("job_round ",count_job_data)
         print(job_data)
         if not 'accp' in job_data['body']['measure']:
-            #print(job_data)
             sleep(20)
             continue
         if job_data['head']['status'] == 'running':
@@ -177,18 +174,8 @@ for service in services_list:
                 'batch_size': batch_size,
                 'test_interval': test_interval
             }
-            #print("data_point")
-            #print(doc)
             es.index(index="job_data_tracking_"+service, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
-            #print(job_data['body']['measure_hist'])
-            #print(len(job_data['body']['measure_hist']['iteration_hist']))
-            #print(len(job_data['body']['measure_hist']['train_loss_hist']))
-            #print(len(job_data['body']['measure_hist']['precision_hist']))
-            #print(len(job_data['body']['measure_hist']['mcll_hist']))
-            #print(len(job_data['body']['measure_hist']['f1_hist']))
-            #print(len(job_data['body']['measure_hist']['accp_hist']))
-            #print(len(job_data['body']['measure_hist']['recall_hist']))
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
             log_file.write("Iteration number "+str(job_data['body']['measure']['iteration'])+"\n")
             log_file.flush()

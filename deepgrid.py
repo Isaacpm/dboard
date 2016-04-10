@@ -29,7 +29,9 @@ min_count_list = config_dict.get('min_count_list')
 min_word_length_list = config_dict.get('min_word_length_list')
 batch_size_list = config_dict.get('batch_size_list')
 test_interval_list = config_dict.get('test_interval_list')
-services_list = config_dict.get('services_list')
+
+#Initialize the services list
+services_list = []
 
 #Set elasticsearch connection
 es = Elasticsearch(es_server,request_timeout=60)

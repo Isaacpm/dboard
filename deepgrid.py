@@ -89,13 +89,11 @@ dd.set_return_format(dd.RETURN_PYTHON)
 #Start the creation and training of services, pulling data every 10sec
 service_count = 1
 for service in services_list:
-    print("service number ",service_count," of ",len(services_list))
     log_file.write("service number "+str(service_count)+" of "+str(len(services_list))+"\n")
     log_file.flush()
     service_count += 1
     #create the service
     service_name = service['service_name']
-    print("Starting test for "+service_name)
     log_file.write("Starting test for "+service_name+"\n")
     log_file.flush()
     if service['template'] == 'mlp':
@@ -116,7 +114,6 @@ for service in services_list:
     elif template == "lregression":
         parameters_mllib_service  = {'template':template,'nclasses':nclasses,'activation':activation}
     parameters_output_service  = {'measure':['mcll','f1']}
-    print(service_name,model,description,mllib,parameters_input_service,parameters_mllib_service,parameters_output_service)
     dd.put_service(service_name,model,description,mllib,parameters_input_service,parameters_mllib_service,parameters_output_service)
     #Start training the service
     iterations = int(service['iterations'])
@@ -126,7 +123,6 @@ for service in services_list:
     parameters_mllib_training = {'gpu':True,'solver':{'iterations':iterations,'test_interval':test_interval,'base_lr':base_lr,'solver_type':solver_type},'net':{'batch_size':batch_size}}
     parameters_output_training = {'measure':['mcll','f1','cmdiag','cmfull']}
     train_data = [root_repository+'dataset/']
-    print(service_name,train_data,parameters_input_training,parameters_mllib_training,parameters_output_training)
     training_service = dd.post_train(service_name.lower(),train_data,parameters_input_training,parameters_mllib_training,parameters_output_training,async=True)
     job_number = training_service['head']['job']
     #Get training data while the service is running
@@ -136,7 +132,6 @@ for service in services_list:
     while status_code == 200:
         job_data = dd.get_train(service_name.lower(),job=job_number, measure_hist=True)
         status_code = job_data['status']['code']
-        print(job_data)
         if not 'accp' in job_data['body']['measure']:
             sleep(20)
             continue
@@ -244,8 +239,6 @@ for service in services_list:
                 'batch_size': batch_size,
                 'test_interval': test_interval
             }
-            #print("data_point")
-            #print(doc)
             es.index(index="job_data_"+service, doc_type='data_point', body=doc)
             #data for job summary to be inserted in another index
             cmdiag = job_data['body']['measure']['cmdiag']
@@ -268,8 +261,6 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-            #print('summary')
-            #print(doc)
             es.index(index="job_summary_"+service, doc_type='summary', body=doc)
             #store confusion matrix
             for department in cmfull:
@@ -293,8 +284,6 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-                #print("confusion")
-                #print(doc)
                 es.index(index="confusion_matrix_"+service, doc_type='matrix', body=doc)
             break
         sleep(10)

@@ -5,8 +5,18 @@ The aliases will be used to access the data from a single point of query, as the
 """
 from elasticsearch import Elasticsearch
 
+
+#Get ES server IP from config file
+config_file = open('deepgrid.conf','r')
+
+for line in config_file:
+    if line.startswith('es_server'):
+        es_server = line.split(':')[1].strip()
+
+es_server = config_dict.get('es_server')
+
 #Connect to local ES cluster
-es = Elasticsearch(request_timeout=60)
+es = Elasticsearch(es_server, request_timeout=60)
 
 #Index templates configuration
 job_data_template = {"order": 0,"template": "dede_job_data*", "settings": {}, "mappings": { "_default_": { "dynamic_templates": [{ "strings": { "mapping": { "type": "string", "fields": { "raw": { "index": "not_analyzed", "ignore_above": 256, "type": "string"}}},"match_mapping_type": "string"}}]}},"aliases": {"dede_job_data": {}}}

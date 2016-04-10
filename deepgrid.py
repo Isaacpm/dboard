@@ -9,7 +9,7 @@ config_file = open('deepgrid.conf','r')
 config_dict = {}
 
 for line in config_file:
-    if not line[0] == "#":
+    if line and line[0].isalpha():
         parameter = line.split(':')[0].strip()
         value = line.split(':')[1].strip()
         config_dict[parameter] = value

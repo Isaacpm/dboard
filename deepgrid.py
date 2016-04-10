@@ -170,7 +170,7 @@ for service in services_list:
                 'batch_size': batch_size,
                 'test_interval': test_interval
             }
-            es.index(index="job_data_tracking_"+service, doc_type='data_point', body=doc)
+            es.index(index="job_data_tracking_"+service_name.lower(), doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
             log_file.write("Iteration number "+str(job_data['body']['measure']['iteration'])+"\n")
@@ -214,7 +214,7 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-                es.index(index="job_data_"+service, doc_type='data_point', body=doc)
+                es.index(index="job_data_"+service_name.lower(), doc_type='data_point', body=doc)
             #Insert last data point from the job summary
             doc = {
                 'running_time': running_time,
@@ -239,7 +239,7 @@ for service in services_list:
                 'batch_size': batch_size,
                 'test_interval': test_interval
             }
-            es.index(index="job_data_"+service, doc_type='data_point', body=doc)
+            es.index(index="job_data_"+service_name.lower(), doc_type='data_point', body=doc)
             #data for job summary to be inserted in another index
             cmdiag = job_data['body']['measure']['cmdiag']
             cmfull = job_data['body']['measure']['cmfull']
@@ -261,7 +261,7 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-            es.index(index="job_summary_"+service, doc_type='summary', body=doc)
+            es.index(index="job_summary_"+service_name.lower(), doc_type='summary', body=doc)
             #store confusion matrix
             for department in cmfull:
                 department_name = department
@@ -284,7 +284,7 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-                es.index(index="confusion_matrix_"+service, doc_type='matrix', body=doc)
+                es.index(index="confusion_matrix_"+service_name.lower(), doc_type='matrix', body=doc)
             break
         sleep(10)
         count_job_data += 1

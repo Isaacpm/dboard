@@ -31,5 +31,5 @@ job_matrix_template = {"order": 0,"template": "dede_job_matrix*","settings": {},
 #Create templates
 es.indices.put_template(name="dede_job_data", body=job_data_template)
 es.indices.put_template(name="dede_job_summary", body=job_summary_template)
-es.indices.put_template(name="dede_job_data", body=job_tracking_template)
-es.indices.put_template(name="dede_job_data", body=job_matrix_template)
+es.indices.put_template(name="dede_job_tracking", body=job_tracking_template)
+es.indices.put_template(name="dede_job_matrix", body=job_matrix_template)

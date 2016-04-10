@@ -11,11 +11,12 @@ config_dict = {}
 for line in config_file:
     if line and line[0].isalpha():
         parameter = line.split(':')[0].strip()
-        value = line.split(':')[1].strip()
+        value = line.split(':')[1].strip().split(',')
+        print(parameter,value)
         config_dict[parameter] = value
 
-dede_server = config_dict.get('dede_server')
-es_server = config_dict.get('es_server')
+dede_server = config_dict.get('dede_server')[0]
+es_server = config_dict.get('es_server')[0]
 
 #Services Parameters
 solver_type_list = config_dict.get('solver_type_list')

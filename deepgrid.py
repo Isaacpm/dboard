@@ -215,7 +215,7 @@ for service in services_list:
                     'test_interval': test_interval
                 }
                 es.index(index="dede_job_data_"+service_name.lower(), doc_type='data_point', body=doc)
-            #Insert last data point from the job summary
+            #Insert last data point
             doc = {
                 'running_time': running_time,
                 'accp': accp,
@@ -240,28 +240,6 @@ for service in services_list:
                 'test_interval': test_interval
             }
             es.index(index="dede_job_data_"+service_name.lower(), doc_type='data_point', body=doc)
-            #data for job summary to be inserted in another index
-            cmdiag = job_data['body']['measure']['cmdiag']
-            cmfull = job_data['body']['measure']['cmfull']
-            #insert everything but the confusion matrix
-            doc = {
-                    'total_running_time': running_time,
-                    'cmdiag': cmdiag,
-                    'service_name': service_name,
-                    'layers': layers,
-                    'description': description,
-                    'total_iterations': iterations,
-                    'solver_type': solver_type,
-                    'base_lr': base_lr,
-                    'activation': activation,
-                    'template': template,
-                    'test_split': test_split,
-                    'min_count': min_count,
-                    'min_word_length': min_word_length,
-                    'batch_size': batch_size,
-                    'test_interval': test_interval
-                }
-            es.index(index="dede_job_summary_"+service_name.lower(), doc_type='summary', body=doc)
             #store confusion matrix
             for department in cmfull:
                 department_name = department

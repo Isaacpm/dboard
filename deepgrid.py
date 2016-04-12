@@ -262,7 +262,7 @@ for service in services_list:
                     'batch_size': batch_size,
                     'test_interval': test_interval
                 }
-                es.index(index="dede_confusion_matrix_"+service_name.lower(), doc_type='matrix', body=doc)
+                es.index(index="dede_job_matrix_"+service_name.lower(), doc_type='matrix', body=doc)
             break
         sleep(10)
         count_job_data += 1

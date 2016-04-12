@@ -19,11 +19,11 @@ es = Elasticsearch(es_server, request_timeout=60)
 
 #Prepare index pattern bodies
 
-confusion_matrix_pattern = {
+job_matrix = {
           "title": "confusion_matrix",
           "fields": '[{"name":"department_output","type":"number","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"_source","type":"_source","count":0,"scripted":false,"indexed":false,"analyzed":false,"doc_values":false},{"name":"layers","type":"number","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"service_name","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":true,"doc_values":false},{"name":"round_number","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":true,"doc_values":false},{"name":"solver_type.raw","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"solver_type","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":true,"doc_values":false},{"name":"total_iterations","type":"number","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"description","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":true,"doc_values":false},{"name":"department_name","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":true,"doc_values":false},{"name":"round_number.raw","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"service_name.raw","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"base_lr","type":"number","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"description.raw","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"_index","type":"string","count":0,"scripted":false,"indexed":false,"analyzed":false,"doc_values":false},{"name":"department_name.raw","type":"string","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"running_time","type":"number","count":0,"scripted":false,"indexed":true,"analyzed":false,"doc_values":true},{"name":"_id","type":"string","count":0,"scripted":false,"indexed":false,"analyzed":false,"doc_values":false},{"name":"_type","type":"string","count":0,"scripted":false,"indexed":false,"analyzed":false,"doc_values":false},{"name":"_score","type":"number","count":0,"scripted":false,"indexed":false,"analyzed":false,"doc_values":false}]'
       }
-      
+
       }
 
 job_data_tracking_pattern = {
@@ -37,6 +37,6 @@ job_data_pattern = {
       }
 
 #Index pattern documents in the .kibana index
-es.index(index=".kibana", doc_type="index-pattern", id="confusion_matrix",body=confusion_matrix_pattern)
+es.index(index=".kibana", doc_type="index-pattern", id="job_matrix",body=job_matrix)
 es.index(index=".kibana", doc_type="index-pattern", id="job_tracking",body=job_data_tracking_pattern)
 es.index(index=".kibana", doc_type="index-pattern", id="job_data",body=job_data_pattern)

@@ -29,6 +29,7 @@ Config File
 Elasticsearch and Data Visualization:
 	es_setup creates the templates which will be used by the model creation script when indexing the data. Each string field with less than 256 characteres will have a multifield .raw which won't be analyzed.
 	kibana_setup creates the index patterns to access the data from the indices. The index patterns will point to the aliases of the indices, not to the indices themselves.
+	
 		ES indexing behaviour, controlled by the model creation script. Each Dede service will have its own set of indices. There will be 3 indices per service:
 			-dede_job_data_SERVICE_NAME, containing the final data of the script. Data points gathered from the job history
 			-dede_job_tracking_SERVICE_NAME, containing the traking of the service as the script pulls data every 10s
@@ -37,8 +38,9 @@ Elasticsearch and Data Visualization:
 			-dede_job_data, points to all dede_job_data_XXX indices
 			-dede_job_tracking points to all dede_job_tracking_XXX indices
 			-dede_job_matrix, points to all dede_job_matrix_XXX indices
-	Kibana will access the data through the aliases to see the information across all services, but individual indices can be used to delete/modify/explore specific services' data.
-	To execute the scripts:
+			
+Kibana will access the data through the aliases to see the information across all services, but individual indices can be used to delete/modify/explore specific services' data.
+To execute the scripts:
 	python3.5 es_setup.py
 	python3.5 kibana_setup.py
 

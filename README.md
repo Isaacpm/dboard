@@ -64,11 +64,11 @@ Example of a config file:
 	iterations_list : 15000
 	base_lr_list : 0.05
 	template_list : mlp
-	activation_list : relu,prelu
+	activation_list : relu;prelu
 	test_split_list : 0.2
 	min_count_list : 2
 	min_word_length_list : 2
-	batch_size_list : 100,200,300,400
+	batch_size_list : 100;200;300;400
 	test_interval_list : 200
 	nclasses: 10
 	root_repository : /var/models_repo

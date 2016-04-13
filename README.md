@@ -41,11 +41,13 @@ Elasticsearch and Data Visualization:
 			
 Kibana will access the data through the aliases to see the information across all services, but individual indices can be used to delete/modify/explore specific services' data.
 To execute the scripts:
+
 	python3.5 es_setup.py
 	python3.5 kibana_setup.py
 
 Model Creation:
 	Once the parameters are set in the config file the script can be run from the command line as any other python script:
+	
 	python3.5 dboard.py
 
 Example of a config file:

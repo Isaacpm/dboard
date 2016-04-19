@@ -2,9 +2,10 @@ import os
 from dd_client import DD
 from elasticsearch import Elasticsearch
 from time import sleep
+from datetime import datetime
 
 #Parse config file and get parameters and connection settings
-config_file = open('deepgrid.conf','r')
+config_file = open('dboard.conf','r')
 
 config_dict = {}
 
@@ -89,6 +90,8 @@ dd.set_return_format(dd.RETURN_PYTHON)
 #Start the creation and training of services, pulling data every 10sec
 service_count = 1
 for service in services_list:
+    #Get start time value to avoid duplicate runs of the same service to overlap
+    start_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     log_file.write("service number "+str(service_count)+" of "+str(len(services_list))+"\n")
     log_file.flush()
     service_count += 1
@@ -168,9 +171,10 @@ for service in services_list:
                 'min_count': min_count,
                 'min_word_length': min_word_length,
                 'batch_size': batch_size,
+                'start_time': start_time,
                 'test_interval': test_interval
             }
-            es.index(index="dede_job_tracking_"+service_name.lower(), doc_type='data_point', body=doc)
+            es.index(index="dede_job_tracking_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
             log_file.write("Iteration number "+str(job_data['body']['measure']['iteration'])+"\n")
@@ -212,9 +216,10 @@ for service in services_list:
                     'min_count': min_count,
                     'min_word_length': min_word_length,
                     'batch_size': batch_size,
+                    'start_time': start_time,
                     'test_interval': test_interval
                 }
-                es.index(index="dede_job_data_"+service_name.lower(), doc_type='data_point', body=doc)
+                es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             #Insert last data point
             doc = {
                 'running_time': running_time,
@@ -237,9 +242,10 @@ for service in services_list:
                 'min_count': min_count,
                 'min_word_length': min_word_length,
                 'batch_size': batch_size,
+                'start_time': start_time,
                 'test_interval': test_interval
             }
-            es.index(index="dede_job_data_"+service_name.lower(), doc_type='data_point', body=doc)
+            es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             #store confusion matrix
             for department in cmfull:
                 department_name = department
@@ -260,9 +266,10 @@ for service in services_list:
                     'min_count': min_count,
                     'min_word_length': min_word_length,
                     'batch_size': batch_size,
+                    'start_time': start_time,
                     'test_interval': test_interval
                 }
-                es.index(index="dede_job_matrix_"+service_name.lower(), doc_type='matrix', body=doc)
+                es.index(index="dede_job_matrix_"+service_name.lower()+"_"+start_time, doc_type='matrix', body=doc)
             break
         sleep(10)
         count_job_data += 1

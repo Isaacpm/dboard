@@ -156,7 +156,6 @@ for service in services_list:
                 'recall': recall,
                 'iteration': iteration,
                 'precision': precision,
-                'mcll': mcll,
                 'f1': f1,
                 'train_loss': train_loss,
                 'service_name': service_name,
@@ -174,6 +173,8 @@ for service in services_list:
                 'start_time': start_time,
                 'test_interval': test_interval
             }
+            if not str(job_history['mcll'][position]) == 'inf':
+                    doc['mcll'] = job_history['mcll'][position]
             es.index(index="dede_job_tracking_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
@@ -216,6 +217,7 @@ for service in services_list:
                 if not str(job_history['train_loss_hist'][position]) == 'inf':
                     doc['train_loss'] = job_history['train_loss_hist'][position]
                 es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
+            cmdiag = job_data['body']['measure']['cmdiag']
             #Insert last data point
             doc = {
                 'running_time': running_time,
@@ -239,10 +241,12 @@ for service in services_list:
                 'min_word_length': min_word_length,
                 'batch_size': batch_size,
                 'start_time': start_time,
+                'cmdiag': cmdiag,
                 'test_interval': test_interval
             }
             es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             #store confusion matrix
+            cmfull = job_data['body']['measure']['cmfull']
             for department in cmfull:
                 department_name = department
                 department_output = cmfull[department]

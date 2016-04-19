@@ -186,7 +186,6 @@ for service in services_list:
             precision = job_data['body']['measure']['precision']
             mcll = job_data['body']['measure']['mcll']
             f1 = job_data['body']['measure']['f1']
-            train_loss = job_data['body']['measure']['train_loss']
             #Get all data from job history and insert it.
             job_history = job_data['body']['measure_hist']
             total_length = len(job_history['iteration_hist'])

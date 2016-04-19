@@ -191,10 +191,6 @@ for service in services_list:
             job_history = job_data['body']['measure_hist']
             total_length = len(job_history['iteration_hist'])
             for position in range(0,total_length):
-                if not str(job_history['train_loss_hist'][position]) == 'inf':
-                    train_loss = job_history['train_loss_hist'][position]
-                else:
-                    train_loss = ''
                 doc = {
                     'running_time': running_time,
                     'accp': job_history['accp_hist'][position],
@@ -203,7 +199,6 @@ for service in services_list:
                     'precision': job_history['precision_hist'][position],
                     'mcll': job_history['mcll_hist'][position],
                     'f1': job_history['f1_hist'][position],
-                    'train_loss': train_loss,
                     'service_name': service_name,
                     'layers': layers,
                     'description': description,
@@ -219,6 +214,8 @@ for service in services_list:
                     'start_time': start_time,
                     'test_interval': test_interval
                 }
+                if not str(job_history['train_loss_hist'][position]) == 'inf':
+                    doc['train_loss'] = job_history['train_loss_hist'][position]
                 es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             #Insert last data point
             doc = {

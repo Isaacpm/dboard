@@ -173,8 +173,8 @@ for service in services_list:
                 'start_time': start_time,
                 'test_interval': test_interval
             }
-            if not str(job_history['mcll'][position]) == 'inf':
-                    doc['mcll'] = job_history['mcll'][position]
+            if not str(job_data['mcll'][position]) == 'inf':
+                    doc['mcll'] = job_data['mcll'][position]
             es.index(index="dede_job_tracking_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")

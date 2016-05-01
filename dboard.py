@@ -33,6 +33,8 @@ batch_size_list = config_dict.get('batch_size_list')
 test_interval_list = config_dict.get('test_interval_list')
 nclasses = int(config_dict.get('nclasses')[0])
 root_repository = config_dict.get('root_repository')[0]
+dataset_version = config_dict.get('dataset_version')[0]
+dataset_description = config_dict.get('dataset_description')[0]
 
 #Initialize the services list
 services_list = []
@@ -157,7 +159,6 @@ for service in services_list:
                 'iteration': iteration,
                 'precision': precision,
                 'f1': f1,
-                'train_loss': train_loss,
                 'service_name': service_name,
                 'layers': layers,
                 'description': description,
@@ -171,10 +172,14 @@ for service in services_list:
                 'min_word_length': min_word_length,
                 'batch_size': batch_size,
                 'start_time': start_time,
-                'test_interval': test_interval
+                'test_interval': test_interval,
+                'dataset_version': dataset_version,
+                'dataset_description': dataset_description
             }
-            if not str(job_data['mcll'][position]) == 'inf':
-                    doc['mcll'] = job_data['mcll'][position]
+            if not str(job_data['body']['measure']['mcll']) == 'inf':
+                doc['mcll'] = job_data['body']['measure']['mcll']
+            if not str(job_data['body']['measure']['train_loss']) == 'inf':
+                doc['train_loss'] = job_data['body']['measure']['train_loss']
             es.index(index="dede_job_tracking_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
@@ -197,7 +202,6 @@ for service in services_list:
                     'recall': job_history['recall_hist'][position],
                     'iteration': job_history['iteration_hist'][position],
                     'precision': job_history['precision_hist'][position],
-                    'mcll': job_history['mcll_hist'][position],
                     'f1': job_history['f1_hist'][position],
                     'service_name': service_name,
                     'layers': layers,
@@ -212,10 +216,14 @@ for service in services_list:
                     'min_word_length': min_word_length,
                     'batch_size': batch_size,
                     'start_time': start_time,
-                    'test_interval': test_interval
+                    'test_interval': test_interval,
+                    'dataset_version': dataset_version,
+                    'dataset_description': dataset_description
                 }
                 if not str(job_history['train_loss_hist'][position]) == 'inf':
                     doc['train_loss'] = job_history['train_loss_hist'][position]
+                if not str(job_history['mcll_hist'][position]) == 'inf':
+                    doc['mcll_hist'] = job_history['mcll_hist'][position]
                 es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             cmdiag = job_data['body']['measure']['cmdiag']
             #Insert last data point
@@ -225,9 +233,7 @@ for service in services_list:
                 'recall': recall,
                 'iteration': iteration,
                 'precision': precision,
-                'mcll': mcll,
                 'f1': f1,
-                'train_loss': train_loss,
                 'service_name': service_name,
                 'layers': layers,
                 'description': description,
@@ -242,8 +248,14 @@ for service in services_list:
                 'batch_size': batch_size,
                 'start_time': start_time,
                 'cmdiag': cmdiag,
-                'test_interval': test_interval
+                'test_interval': test_interval  ,
+                'dataset_version': dataset_version,
+                'dataset_description': dataset_description
             }
+            if not str(job_data['body']['measure']['mcll']) == 'inf':
+                doc['mcll'] = job_data['body']['measure']['mcll']
+            if not str(job_data['body']['measure']['train_loss']) == 'inf':
+                doc['train_loss'] = job_data['body']['measure']['train_loss']
             es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             #store confusion matrix
             cmfull = job_data['body']['measure']['cmfull']
@@ -267,7 +279,9 @@ for service in services_list:
                     'min_word_length': min_word_length,
                     'batch_size': batch_size,
                     'start_time': start_time,
-                    'test_interval': test_interval
+                    'test_interval': test_interval,
+                    'dataset_version': dataset_version,
+                    'dataset_description': dataset_description
                 }
                 es.index(index="dede_job_matrix_"+service_name.lower()+"_"+start_time, doc_type='matrix', body=doc)
             break

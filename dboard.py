@@ -60,12 +60,12 @@ for solver in solver_type_list:
                                         for test_interval in test_interval_list:
                                             service_dict = {}
                                             if template == 'mlp':
-                                                service_dict["service_name"] = solver+"_"+str("-".join(str(x) for x in layers))+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
-                                                service_dict["description"] = solver+" "+str("-".join(str(x) for x in layers))+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
+                                                service_dict["service_name"] = solver+"_"+str("-".join(str(x) for x in layers))+"_"+str(dataset_version)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
+                                                service_dict["description"] = solver+" "+str("-".join(str(x) for x in layers))+" "+str(dataset_description)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
                                                 service_dict["layers"] = layers
                                             else:
-                                                service_dict["service_name"] = solver+"_"+str(iterations)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
-                                                service_dict["description"] = solver+" "+str(iterations)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
+                                                service_dict["service_name"] = solver+"_"+str(dataset_version)+"_"+str(base_lr).replace('.','-')+"_"+str(template)+"_"+str(activation)+"_"+str(min_count)+"_"+str(min_word_length)+"_"+str(batch_size)+"_"+str(test_interval)
+                                                service_dict["description"] = solver+" "+str(dataset_description)+" "+str(base_lr)+" "+str(template)+" "+str(activation)+" "+str(min_count)+" "+str(min_word_length)+" "+str(batch_size)+" "+str(test_interval)
                                             service_dict["solver_type"] = solver
                                             service_dict["iterations"] = iterations
                                             service_dict["base_lr"] = base_lr

@@ -223,7 +223,7 @@ for service in services_list:
                 if not str(job_history['train_loss_hist'][position]) == 'inf':
                     doc['train_loss'] = job_history['train_loss_hist'][position]
                 if not str(job_history['mcll_hist'][position]) == 'inf':
-                    doc['mcll_hist'] = job_history['mcll_hist'][position]
+                    doc['mcll'] = job_history['mcll_hist'][position]
                 es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             cmdiag = job_data['body']['measure']['cmdiag']
             #Insert last data point

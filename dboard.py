@@ -158,7 +158,6 @@ for service in services_list:
                 'recall': recall,
                 'iteration': iteration,
                 'precision': precision,
-                'f1': f1,
                 'service_name': service_name,
                 'layers': layers,
                 'description': description,
@@ -180,6 +179,8 @@ for service in services_list:
                 doc['mcll'] = job_data['body']['measure']['mcll']
             if not str(job_data['body']['measure']['train_loss']) == 'inf':
                 doc['train_loss'] = job_data['body']['measure']['train_loss']
+            if not str(job_data['body']['measure']['f1']) == 'inf':
+                doc['f1'] = job_data['body']['measure']['f1']
             es.index(index="dede_job_tracking_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
         elif job_data['head']['status'] == 'finished':
             log_file.write("job running time "+str(job_data['head']['time'])+"\n")
@@ -202,7 +203,6 @@ for service in services_list:
                     'recall': job_history['recall_hist'][position],
                     'iteration': job_history['iteration_hist'][position],
                     'precision': job_history['precision_hist'][position],
-                    'f1': job_history['f1_hist'][position],
                     'service_name': service_name,
                     'layers': layers,
                     'description': description,
@@ -224,6 +224,8 @@ for service in services_list:
                     doc['train_loss'] = job_history['train_loss_hist'][position]
                 if not str(job_history['mcll_hist'][position]) == 'inf':
                     doc['mcll'] = job_history['mcll_hist'][position]
+                if not str(job_history['f1_hist'][position]) == 'inf':
+                    doc['f1'] = job_history['f1_hist'][position]
                 es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             cmdiag = job_data['body']['measure']['cmdiag']
             #Insert last data point
@@ -256,6 +258,8 @@ for service in services_list:
                 doc['mcll'] = job_data['body']['measure']['mcll']
             if not str(job_data['body']['measure']['train_loss']) == 'inf':
                 doc['train_loss'] = job_data['body']['measure']['train_loss']
+            if not str(job_data['body']['measure']['f1']) == 'inf':
+                doc['f1'] = job_data['body']['measure']['f1']
             es.index(index="dede_job_data_"+service_name.lower()+"_"+start_time, doc_type='data_point', body=doc)
             #store confusion matrix
             cmfull = job_data['body']['measure']['cmfull']
